@@ -15,7 +15,7 @@ class NoteApp:
     def create_note(self, title, content, author):
         filename = self.folder + "/" + title + ".txt"
         with open(filename, "w") as f:
-            f.write("Autor: " + author + "\n---\n" + content)
+            f.write("Autor: " + author + " " + content)
         print("Notiță salvată!")
 
     def list_notes(self):
