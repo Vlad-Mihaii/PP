@@ -33,7 +33,7 @@ class CardPayment(PaymentMethod):
         print("Nu se poate plati cu cardul!")
         return False
 
-class CashPayment(PaymentMethod):
+class CashPayment(PaymentMethod): 
     def __init__(self, available_amount: float):
         self.available_amount = available_amount
 
