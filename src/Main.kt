@@ -8,23 +8,23 @@ class FsmLogicEngine : LogicEngine {
 
     // Starile Automatului Finit
     private enum class State {
-        POTENTIAL_TRUE, // Starea inițială: totul e true până acum
-        DEFINITIVE_FALSE // S-a întâlnit un 'false', rezultatul final va fi false
+        TRUE,
+        FALSE //
     }
 
     override fun calculate(inputs: List<Boolean>): Boolean {
-        var currentState = State.POTENTIAL_TRUE
+        var currentState = State.TRUE
 
         for (input in inputs) {
             currentState = when (currentState) {
-                State.POTENTIAL_TRUE -> if (input) State.POTENTIAL_TRUE else State.DEFINITIVE_FALSE
-                State.DEFINITIVE_FALSE -> State.DEFINITIVE_FALSE
+                State.TRUE -> if (input) State.TRUE else State.FALSE
+                State.FALSE -> State.FALSE
             }
             // Optimizare: dacă am ajuns în starea FALSE, nu mai are sens să verificăm restul
-            if (currentState == State.DEFINITIVE_FALSE) break
+            if (currentState == State.FALSE) break
         }
 
-        return currentState == State.POTENTIAL_TRUE
+        return currentState == State.TRUE
     }
 }
 
@@ -81,7 +81,7 @@ class AndGateBuilder(private val engine: LogicEngine) {
 }
 
 fun main() {
-    // Alegem implementarea motorului de calcul (Bridge)
+
     val fsmEngine = FsmLogicEngine()
 
     // AND 3 intrari
