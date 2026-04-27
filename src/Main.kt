@@ -20,7 +20,7 @@ class FsmLogicEngine : LogicEngine {
                 State.TRUE -> if (input) State.TRUE else State.FALSE
                 State.FALSE -> State.FALSE
             }
-            // Optimizare: dacă am ajuns în starea FALSE, nu mai are sens să verificăm restul
+            // Daca e fals, nu mai are rost sa continuam 
             if (currentState == State.FALSE) break
         }
 
@@ -91,7 +91,7 @@ fun main() {
         .addInput(false)
         .build()
 
-    println("Rezultat Poartă AND (3 intrari): ${gate3Inputs.getResult()}")
+    println("Rezultat Poarta AND (3 intrari): ${gate3Inputs.getResult()}")
 
     // AND 2 intrari
     val gate2Inputs = AndGateBuilder(fsmEngine)
@@ -99,7 +99,7 @@ fun main() {
         .addInput(true)
         .build()
 
-    println("Rezultat Poartă AND (2 intrari): ${gate2Inputs.getResult()}")
+    println("Rezultat Poarta AND (2 intrari): ${gate2Inputs.getResult()}")
 
     //  AND 8 intrari
     val builder8 = AndGateBuilder(fsmEngine)
@@ -107,5 +107,5 @@ fun main() {
     builder8.addInput(true) // Al 8-lea element
 
     val gate8Inputs = builder8.build()
-    println("Rezultat Poartă AND (8 intrari): ${gate8Inputs.getResult()}")
+    println("Rezultat Poarta AND (8 intrari): ${gate8Inputs.getResult()}")
 }
