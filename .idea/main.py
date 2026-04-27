@@ -91,7 +91,7 @@ class VendingMachineSTM:
             # Se revine la starea de adaugare bani (bucla principala )
 
     def porneste(self):
-        """Simularea funcționării automatului."""
+        #Functionare aparat
         print("Bun venit la automatul de sucuri!")
 
         while True:
