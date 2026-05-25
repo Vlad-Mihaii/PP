@@ -18,4 +18,4 @@ print(f"Rezultatul multiplicarii: {multiplied_pairs}")
 
 #  Sumarea rezultatelor utilizand reduce
 total_sum = functools.reduce(operator.add, multiplied_pairs, 0)
-print(f"Suma finală: {total_sum}")
+print(f"Suma finala: {total_sum}")

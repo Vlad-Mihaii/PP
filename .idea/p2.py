@@ -20,5 +20,5 @@ grouped_res = more_itertools.map_reduce(words, key_func, value_func)
 # Sortam dictionarul dupa cheie ( litere )
 sorted_algorithm_result = {k: grouped_res[k] for k in sorted(grouped_res.keys())}
 
-print("Rezultatul sortat și grupat:")
+print("Rezultatul sortat si grupat:")
 pprint(sorted_algorithm_result)
