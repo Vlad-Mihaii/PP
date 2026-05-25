@@ -7,7 +7,7 @@ from functional import seq
 # echivalent data class din kotlin
 Person = namedtuple('Person', ['firstName', 'lastName', 'dateOfBirth', 'emailAddress'])
 
-
+# lista pentru persoane
 persons = [
     Person("John", "Doe", datetime.date(1960, 11, 3), "jdoe@example.com"),
     Person("Ellen", "Smith", datetime.date(1992, 5, 13), "ellensmith@example.com"),
@@ -17,11 +17,11 @@ persons = [
     Person("Jack", "Williams", datetime.date(2005, 5, 28), "")
 ]
 
-#  Gasirea celei mai tinere și celei mai batrane persoane
+#  Gasirea celei mai tinere si celei mai batrane persoane
 youngest = seq(persons).sorted(key=lambda p: p.dateOfBirth, reverse=True).first()
 oldest = seq(persons).sorted(key=lambda p: p.dateOfBirth).first()
 print(f"Cea mai tanara persoana: {youngest}")
-print(f"Cea mai batrâna persoana: {oldest}\n")
+print(f"Cea mai batrana persoana: {oldest}\n")
 
 #  Filtrare persoane minore (< 18 ani)
 today = datetime.date.today()
@@ -45,5 +45,5 @@ distinct_names = seq(persons).map(lambda p: p.firstName).distinct().make_string(
 print(f"Prenume distincte: {distinct_names}\n")
 
 # 7. Numararea persoanelor cu numele "Smith"
-smiths_count = seq(persons).filter(lambda p: p.lastName == "Smith").count()
+smiths_count = seq(persons).count(lambda p: p.lastName == "Smith")
 print(f"Numar de persoane numite Smith: {smiths_count}\n")
