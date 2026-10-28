@@ -1,4 +1,4 @@
-# **Documentație: Client MQTT v5** {#documentație:-client-mqtt-v5}
+# **Documentație: Client MQTT v5** 
 
 **Studenți:** Enache Brianna, Vacaru Vlad-Mihai
 
@@ -28,9 +28,9 @@
 * [8\. Centralizatorul de Temporizări (Timers)](#8.-centralizatorul-de-temporizări-\(timers\))  
 * [9\. Planificarea activităților și repartizarea responsabilităților](#9.-planificarea-activităților-și-repartizarea-responsabilităților)
 
-## **1\. Introducere** {#1.-introducere}
+## **1\. Introducere** 
 
-### **1.1 Descrierea protocolului** {#1.1-descrierea-protocolului}
+### **1.1 Descrierea protocolului** 
 
 MQTT (Message Queuing Telemetry Transport) versiunea 5.0 este un protocol de mesagerie de nivel aplicație, bazat pe modelul publish/subscribe, care rulează peste stiva TCP/IP. Este conceput să fie extrem de ușor (lightweight) și eficient, fiind ideal pentru conexiuni unde lățimea de bandă este limitată. Spre deosebire de protocoalele bazate pe cerere/răspuns (precum HTTP sau CoAP), MQTT utilizează un Broker central care distribuie mesajele de la publicatori (publishers) către abonați (subscribers) pe baza unor Topic-uri.
 
@@ -77,7 +77,7 @@ Octet 2 | Remaining Length (1-4 octeți) |
 
 ### 
 
-### **2.2 Metodologia de Implementare a Comunicației prin socket** {#2.2-metodologia-de-implementare-a-comunicației-prin-socket}
+### **2.2 Metodologia de Implementare a Comunicației prin socket** 
 
 Deoarece nu folosim biblioteci dedicate pentru MQTT, toată comunicația se face direct peste o conexiune TCP/IP (folosind modulul standard socket, pe portul 1883). Protocolul MQTT v5 este un protocol binar, ceea ce înseamnă că noi trebuie să construim manual fiecare pachet la nivel de octeți (bytes) și biți înainte să îl trimitem pe socket, și apoi să despachetăm octeții primiți de la Broker.
 
@@ -87,7 +87,7 @@ Deoarece nu folosim biblioteci dedicate pentru MQTT, toată comunicația se face
    * Pune în față octetul de control din Antetul Fix (tipul pachetului \+ flag-urile), lipește Remaining Length și adaugă buffer-ul temporar, trimițând rezultatul final pe socket.  
 2. **Metoda de citire de pe socket (Despachetarea):** Deoarece socket-ul TCP livrează un flux continuu de octeți, recepția nu se face citind o dimensiune fixă la întâmplare. Metoda de recepție funcționează într-o buclă continuă care citește mai întâi primul octet (pentru a afla tipul pachetului), apoi citește octeții de lungime (decodificând Variable Byte Integer), și abia apoi apelează citirea din socket pentru numărul exact de octeți rămași. Astfel, pachetele sunt separate corect și trimise către un Dispecer de Pachete care decide ce trebuie făcut cu fiecare.
 
-### **2.3 Pachetele implementate** {#2.3-pachetele-implementate}
+### **2.3 Pachetele implementate** 
 
 Aplicația implementează un subset precis de pachete de control MQTT v5, limitat strict la necesitățile funcționalității client-broker stabilite în cerințe. În tabelul de mai jos este detaliat fiecare pachet gestionat și interpretat la nivel de socket, direcția sa pe rețea și rolul specific în cadrul aplicației:
 
@@ -104,7 +104,7 @@ Aplicația implementează un subset precis de pachete de control MQTT v5, limita
 
 ## 
 
-## **3\. Interfața Grafică, Conectare, Autentificare și LastWill** {#3.-interfața-grafică,-conectare,-autentificare-și-lastwill}
+## **3\. Interfața Grafică, Conectare, Autentificare și LastWill** 
 
 ### **3.1 Organizarea Interfeței Grafice (GUI)** {#3.1-organizarea-interfeței-grafice-(gui)}
 
@@ -113,7 +113,7 @@ Fereastra aplicației este împărțită logic în două zone principale, necesa
 1. **Panoul de Configurare și Conectare:** Conține câmpuri de text pentru adresa IP și portul brokerului, ID-ul clientului, utilizator și parolă. De asemenea, include o secțiune dedicată pentru configurarea mesajului LastWill (topic, conținut mesaj, nivel QoS, retain flag) și un selector pentru nivelul general QoS.  
 2. **Panoul de Monitorizare (Dashboard):** O zonă vizuală (tabel sau panouri dinamice) unde sunt afișați în timp real parametrii proprii ai sistemului, alături de datele recepționate de la celelalte instanțe conectate.
 
-### **3.2 Fluxul de Conectare și Autentificare** {#3.2-fluxul-de-conectare-și-autentificare}
+### **3.2 Fluxul de Conectare și Autentificare** 
 
 1. **Validarea și inițierea:** Aplicația preia datele din câmpurile interfeței și le validează (asigurându-se că adresa brokerului și ID-ul clientului nu sunt goale), apoi deschide conexiunea TCP prin socket către broker.  
 2. **Construirea pachetului:** Se apelează metoda de construire a pachetului CONNECT. Pe baza câmpurilor completate în GUI, se compune octetul de opțiuni (Connect Flags) folosind operații pe biți:  
@@ -121,7 +121,7 @@ Fereastra aplicației este împărțită logic în două zone principale, necesa
    * Dacă secțiunea LastWill este completată, se activează biții asociați pentru Will.  
 3. **Trimiterea și Răspunsul:** Informațiile (ID client, topic/mesaj LastWill, utilizator, parolă) sunt adăugate în Payload în ordinea strictă cerută de protocol și trimise pe socket. La primirea CONNACK, dacă Reason Code este 0x00, aplicația trece în starea „Conectat” și pornește firele de execuție pentru monitorizare și Keep Alive. O eroare de autentificare determină închiderea socket-ului și afișarea unui mesaj de eroare pe ecran.
 
-### **3.3 Gestionarea mecanismului LastWill** {#3.3-gestionarea-mecanismului-lastwill}
+### **3.3 Gestionarea mecanismului LastWill** 
 
 Din punct de vedere al aplicației client, mesajul LastWill nu necesită un fir de execuție separat pentru publicare, responsabilitatea revenirii Brokerului. Implementarea noastră acoperă:
 
@@ -129,25 +129,25 @@ Din punct de vedere al aplicației client, mesajul LastWill nu necesită un fir 
 * **Deconectarea normală:** Când utilizatorul oprește intenționat aplicația, se trimite mai întâi pachetul DISCONNECT pe socket și abia apoi se închide conexiunea TCP. Astfel, Brokerul știe că nu a fost o avarie și nu publică mesajul.  
 * **Căderea neprevăzută:** Dacă aplicația se închide forțat sau pică rețeaua, pachetul DISCONNECT nu este trimis. Absența acestuia declanșează publicarea automată a mesajului LastWill de către Broker către restul rețelei.
 
-## **4\. Implementarea Aplicației Demonstrative (Monitorizare și Afișare)** {#4.-implementarea-aplicației-demonstrative-(monitorizare-și-afișare)}
+## **4\. Implementarea Aplicației Demonstrative (Monitorizare și Afișare)** 
 
 Pentru ca aplicația să funcționeze simultan atât ca Publisher (trimițând proprii parametri), cât și ca Subscriber (citind parametrii altora), logica se bazează pe două fluxuri de lucru paralele care pornesc imediat după confirmarea conectării:
 
-### **4.1 Fluxul de Publicare Periodică (Rolul de Publisher)** {#4.1-fluxul-de-publicare-periodică-(rolul-de-publisher)}
+### **4.1 Fluxul de Publicare Periodică (Rolul de Publisher)** 
 
 * Se creează un Colector de Telemetrie care rulează pe baza unui timer (ex. la fiecare 3-5 secunde).  
 * La declanșare, interoghează sistemul de operare pentru a citi valorile curente (procent CPU, memorie RAM utilizată, temperatură).  
 * Pentru fiecare parametru, formează dinamic numele topic-ului folosind ID-ul clientului (ex: sistem/\<ID\_Client\>/cpu) și apelează metoda de publicare. Aceasta împachetează valoarea într-un pachet PUBLISH și îl trimite către Broker respectând QoS-ul setat.
 
 
-### **4.2 Fluxul de Abonare și Afișare (Rolul de Subscriber)** {#4.2-fluxul-de-abonare-și-afișare-(rolul-de-subscriber)}
+### **4.2 Fluxul de Abonare și Afișare (Rolul de Subscriber)** 
 
 * Imediat după conectare, aplicația trimite automat un pachet SUBSCRIBE către un topic cu wildcard (ex: sistem/\#), abonându-se la toate mesajele de monitorizare din rețea.  
 * Când Firul de Recepție primește un PUBLISH de pe socket, extrage Topic-ul și Payload-ul (valoarea parametrului).  
 * Se execută o operație de despărțire (split) a topic-ului după caracterul / pentru a izola sursa mesajului (ID\_Client) și tipul parametrului (CPU, memorie, temp).  
 * Datele sunt trimise către GUI: dacă acel ID\_Client este nou, interfața creează automat o secțiune/rând nou în Dashboard. Dacă există deja, valorile sunt actualizate în timp real.
 
-## **5\. Metodologia de Implementare a Mecanismului Keep Alive** {#5.-metodologia-de-implementare-a-mecanismului-keep-alive}
+## **5\. Metodologia de Implementare a Mecanismului Keep Alive** 
 
 Pentru a detecta căderile de rețea, mecanismul Keep Alive este implementat printr-un Monitor de Activitate ce rulează în fundal pe durata conexiunii:
 
@@ -157,23 +157,23 @@ Pentru a detecta căderile de rețea, mecanismul Keep Alive este implementat pri
 4. **Confirmarea PINGRESP:** Când Firul de Recepție primește pachetul PINGRESP de la Broker, starea de așteptare este ștearsă, confirmând stabilitatea rețelei. Dacă trece un timp de timeout fără a sosi acest răspuns, Monitorul declară conexiunea căzută, închide socket-ul și notifică utilizatorul în GUI.  
    
 
-## **6\. Metodologia de Implementare pentru Mecanismele QoS 0, 1 și 2** {#6.-metodologia-de-implementare-pentru-mecanismele-qos-0,-1-și-2}
+## **6\. Metodologia de Implementare pentru Mecanismele QoS 0, 1 și 2**
 
 Pentru a garanta nivelurile de livrare, aplicația utilizează un Manager de Sesiune și Tranzacții QoS. Acesta integrează un Packet ID Generator (secvențial între 1 și 65.535) și structuri de date (dicționare/liste) pentru evidența pachetelor aflate în tranzit:
 
-### **6.1 Fluxul pentru QoS 0 (At most once)** {#6.1-fluxul-pentru-qos-0-(at-most-once)}
+### **6.1 Fluxul pentru QoS 0 (At most once)** 
 
 * **La trimitere:** Pachetul PUBLISH este construit fără Packet ID, este scris direct pe socket și tranzacția se încheie imediat (nu se reține în memorie).  
 * **La primire:** Datele sunt extrase și trimise direct către GUI. Nu se trimite niciun răspuns de confirmare.
 
 
-### **6.2 Fluxul pentru QoS 1 (At least once)** {#6.2-fluxul-pentru-qos-1-(at-least-once)}
+### **6.2 Fluxul pentru QoS 1 (At least once)** 
 
 * **La trimitere:** Se generează un Packet ID. Pachetul PUBLISH este salvat într-un dicționar de tranzacții („În așteptare PUBACK”) și trimis pe socket. La primirea unui PUBACK valid de la Broker, mesajul este șters din dicționar. Dacă mesajul rămâne blocat un anumit timp fără confirmare, un mecanism de retry îl retrimite pe socket activând flag-ul de duplicat (DUP \= 1).  
 * **La primire:** După afișarea datelor din PUBLISH, aplicația extrage ID-ul și trimite imediat înapoi pe socket un pachet PUBACK cu același ID.
 
 
-### **6.3 Fluxul pentru QoS 2 (Exactly once \- Automat în 4 pași)** {#6.3-fluxul-pentru-qos-2-(exactly-once---automat-în-4-pași)}
+### **6.3 Fluxul pentru QoS 2 (Exactly once \- Automat în 4 pași)** 
 
 * **La trimitere:**  
   1. Se alocă un Packet ID, se salvează mesajul cu starea AȘTEPTARE\_PUBREC și se trimite PUBLISH.  
@@ -199,7 +199,7 @@ Pentru a garanta nivelurile de livrare, aplicația utilizează un Manager de Ses
        |                                          |
 ```
 
-## **7\. Modelul de Stări ale Aplicației** {#7.-modelul-de-stări-ale-aplicației}
+## **7\. Modelul de Stări ale Aplicației** 
 
 Pentru a gestiona corect comunicația și tranzacțiile detaliate anterior, aplicația folosește un automat de stări intern. Acestea dictează etapele conexiunii și stadiul mesajelor aflate în tranzit:
 
@@ -215,7 +215,7 @@ Pentru a gestiona corect comunicația și tranzacțiile detaliate anterior, apli
 
 ## 
 
-## **8\. Centralizatorul de Temporizări (Timers)** {#8.-centralizatorul-de-temporizări-(timers)}
+## **8\. Centralizatorul de Temporizări (Timers)** 
 
 Pentru a funcționa non-blocant și a menține starea rețelei, aplicația se bazează pe trei temporizatoare principale:
 
@@ -227,7 +227,7 @@ Pentru a funcționa non-blocant și a menține starea rețelei, aplicația se ba
 
 ## 
 
-## **9\. Planificarea activităților și repartizarea responsabilităților** {#9.-planificarea-activităților-și-repartizarea-responsabilităților}
+## **9\. Planificarea activităților și repartizarea responsabilităților** 
 
 Proiectarea modulară pe niveluri a permis o divizare clară a sarcinilor în cadrul echipei:
 
